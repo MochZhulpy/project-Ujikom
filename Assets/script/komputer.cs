@@ -67,4 +67,20 @@ public class komputer : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    public GameObject komputerPrefab;
+    public Transform[] spawnPoints;
+    public float spawnInterval = 10f;
+
+    IEnumerator SpawnKomputer()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(spawnInterval);
+
+            // Pilih posisi spawn secara acak
+            Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+            Instantiate(komputerPrefab, spawnPoint.position, spawnPoint.rotation);
+        }
+    }
 }
