@@ -13,7 +13,11 @@ public class MainMenu : MonoBehaviour
     //Keluar dari aplikasi
     public void Quit()
     {
-        Application.Quit();
-        Debug.Log("Player Has Quit The Game"); //Menampilkan pesan ke console
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false; // Berhenti menjalankan game di editor
+#else
+        Application.Quit(); // Keluar jika sudah dalam build
+#endif
+        Debug.Log("Player Has Quit The Game");
     }
 }
