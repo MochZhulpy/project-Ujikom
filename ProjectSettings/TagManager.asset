@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 3
   tags:
   - Terrain
+  - Komputer
+  - ScoreText
+  - score
   layers:
   - Default
   - TransparentFX

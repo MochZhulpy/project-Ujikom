@@ -1,20 +1,25 @@
-﻿using UnityEngine;
-using System;
+﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using System; // Untuk event
 
 public class MissionManager : MonoBehaviour
 {
-    public static MissionManager Instance;
+    // Singleton instance
+    public static MissionManager Instance { get; private set; }
 
-    private Dictionary<string, bool> missionStatus = new Dictionary<string, bool>();
-
-    private int score = 0; // Variabel untuk menyimpan skor
-
-    // ✅ Event yang akan dipanggil saat skor berubah
+    // Event untuk perubahan skor
     public event Action OnScoreChanged;
+
+    // Menyimpan misi yang sudah selesai
+    private HashSet<string> completedMissions = new HashSet<string>();
+
+    // Skor player
+    private int score = 0;
 
     private void Awake()
     {
+        // Setup singleton
         if (Instance == null)
         {
             Instance = this;
@@ -26,33 +31,34 @@ public class MissionManager : MonoBehaviour
         }
     }
 
-    // ✅ Menambahkan skor
-    public void AddScore(int amount)
-    {
-        score += amount;
-        OnScoreChanged?.Invoke(); // Panggil event jika ada yang subscribe
-    }
-
-    // ✅ Mengambil nilai skor saat ini
-    public int GetScore()
-    {
-        return score;
-    }
-
-    // ✅ Method untuk menyelesaikan misi
+    // Menandai misi selesai dan memberikan reward
     public void CompleteMission(string missionID, int scoreReward = 0)
     {
-        if (!missionStatus.ContainsKey(missionID))
+        if (!completedMissions.Contains(missionID))
         {
-            missionStatus[missionID] = true;
-            AddScore(scoreReward); // Tambahkan skor saat misi selesai
-            Debug.Log($"Misi {missionID} selesai! Skor ditambahkan: {scoreReward}");
+            completedMissions.Add(missionID);
+            score += scoreReward;
+
+            Debug.Log("Skor bertambah menjadi: " + score); // Tambahkan log ini
+
+            // Pastikan baris berikut ada dan berjalan dengan benar:
+            if (OnScoreChanged != null)
+            {
+                OnScoreChanged.Invoke();
+            }
+            // atau dengan sintaks yang lebih ringkas: OnScoreChanged?.Invoke();
         }
     }
 
-    // ✅ Method untuk mengecek apakah misi sudah selesai
+    // Mengecek apakah misi sudah selesai
     public bool IsMissionCompleted(string missionID)
     {
-        return missionStatus.ContainsKey(missionID) && missionStatus[missionID];
+        return completedMissions.Contains(missionID);
+    }
+
+    // Mendapatkan skor saat ini
+    public int GetScore()
+    {
+        return score;
     }
 }
